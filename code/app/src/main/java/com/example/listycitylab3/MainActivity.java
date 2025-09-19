@@ -21,6 +21,10 @@ public class MainActivity extends AppCompatActivity implements AddCityFragment.A
         cityAdapter.add(city);
         cityAdapter.notifyDataSetChanged();
     }
+    @Override
+    public void updateCity(City city) {
+        cityAdapter.notifyDataSetChanged(); // refresh the list
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,10 +42,19 @@ public class MainActivity extends AppCompatActivity implements AddCityFragment.A
         cityList = findViewById(R.id.city_list);
         cityAdapter = new CityArrayAdapter(this, dataList);
         cityList.setAdapter(cityAdapter);
-
+        cityList.setOnItemClickListener((parent, view, position, id) -> {
+            City city = dataList.get(position);
+            AddCityFragment.newInstance(city).show(getSupportFragmentManager(), "Edit City");
+        });
         FloatingActionButton fab = findViewById(R.id.button_add_city);
         fab.setOnClickListener(v -> {
             new AddCityFragment().show(getSupportFragmentManager(), "Add City");
+        });
+
+        cityList.setOnItemClickListener((parent, view, position, id) -> {
+            City selectedCity = dataList.get(position); // get clicked city
+            AddCityFragment.newInstance(selectedCity)  // pass it to fragment
+                    .show(getSupportFragmentManager(), "Edit City");
         });
     }
 }
